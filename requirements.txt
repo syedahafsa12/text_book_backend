@@ -10,9 +10,6 @@ sqlalchemy==2.0.25
 psycopg2-binary==2.9.9
 alembic==1.13.1
 
-# Better-Auth
-better-auth==0.1.0
-
 # Vector Database
 qdrant-client==1.7.3
 
