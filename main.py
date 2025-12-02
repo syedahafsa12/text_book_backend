@@ -22,10 +22,20 @@ from gemini_rag import gemini_rag
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Create database tables
-models.Base.metadata.create_all(bind=engine)
-
 app = FastAPI(title=settings.app_name)
+
+# Initialize database tables on first request (lazy loading for Vercel)
+@app.on_event("startup")
+async def startup_event():
+    """Initialize database on startup"""
+    try:
+        from database import init_db
+        engine, _ = init_db()
+        if engine:
+            models.Base.metadata.create_all(bind=engine)
+            logger.info("Database tables created successfully")
+    except Exception as e:
+        logger.warning(f"Database initialization skipped: {e}")
 
 # CORS Configuration
 app.add_middleware(
